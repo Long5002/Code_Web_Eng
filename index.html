@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng Dụng Học Tiếng Anh Pro</title>
+    <style>
+        /* ================= MÀU SẮC & PHÔNG NỀN CHỦ ĐẠO ================= */
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --dark-color: #1e3a8a;
+            --bg-color: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ================= 1. THANH CÔNG CỤ (NAVIGATION BAR) ================= */
+        .navbar {
+            background-color: white;
+            width: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-container {
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+            margin: 0 15px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 600;
+            padding: 10px 5px;
+            display: block;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Menu con (Dropdown) */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            list-style: none;
+            border-radius: 8px;
+            min-width: 160px;
+        }
+
+        .dropdown-menu li a {
+            padding: 10px 20px;
+            display: block;
+            color: #374151;
+            text-decoration: none;
+        }
+
+        .dropdown-menu li a:hover {
+            background-color: #f3f4f6;
+            color: var(--primary-color);
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+
+        .btn-logout {
+            background-color: #ef4444;
+            color: white !important;
+            padding: 6px 15px !important;
+            border-radius: 6px;
+        }
+
+        .btn-logout:hover {
+            background-color: #dc2626 !important;
+        }
+
+        /* ================= VÙNG CHỨA NỘI DUNG CHÍNH ================= */
+        .main-content {
+            margin-top: 120px;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        /* ================= 2. KHUNG ĐĂNG NHẬP / ĐĂNG KÝ ================= */
+        .auth-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .auth-card h2 {
+            margin-top: 0;
+            color: var(--dark-color);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .btn-auth {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-auth:hover {
+            background-color: #1d4ed8;
+        }
+
+        .switch-auth {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .switch-auth a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* ================= 3. GIAO DIỆN TRANG CHỦ KHI ĐĂNG NHẬP THÀNH CÔNG ================= */
+        .welcome-card {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .welcome-card h2 {
+            color: var(--primary-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background-color: #eff6ff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Ẩn các phần nội dung */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a class="logo" href="#" onclick="showPage('home')">EngMaster</a>
+            <ul class="nav-menu hidden" id="nav-links">
+                <li class="nav-item"><a class="nav-link" onclick="showPage('home')">Trang chủ</a></li>
+                
+                <li class="nav-item">
+                    <a class="nav-link">Các học phần ▼</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" onclick="alert('Tính năng luyện Nghe đang phát triển!')">🎧 Luyện Nghe</a></li>
+                        <li><a href="#" onclick="alert('Tính năng luyện Nói đang phát triển!')">🗣️ Luyện Nói</a></li>
+                        <li><a href="#" onclick="alert('Tính năng luyện Đọc đang phát triển!')">📖 Luyện Đọc</a></li>
+                        <li><a href="#" onclick="alert('Tính năng luyện Viết đang phát triển!')">✍️ Luyện Viết</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link">Cá nhân ▼</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" id="profile-name">Họ tên: ---</a></li>
+                        <li><a href="#">Cấp độ: Học viên mới</a></li>
+                        <li><a href="#">Điểm số: 0 XP</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item"><a class="nav-link btn-logout" onclick="logout()">Đăng xuất</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        
+        <div class="auth-card" id="login-form">
+            <h2>Đăng Nhập</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Tài khoản hoặc Email</label>
+                    <input type="text" id="login-username" placeholder="Nhập admin hoặc tài khoản đăng ký..." required>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="login-password" placeholder="Nhập mật khẩu..." required>
+                </div>
+                <button type="submit" class="btn-auth">ĐĂNG NHẬP</button>
+            </form>
+            <div class="switch-auth">
+                Chưa có tài khoản? <a href="#" onclick="switchForm('register')">Đăng ký ngay</a>
+            </div>
+        </div>
+
+        <div class="auth-card hidden" id="register-form">
+            <h2>Đăng Ký Tài Khoản</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Họ và Tên</label>
+                    <input type="text" id="reg-name" placeholder="Nhập họ tên của bạn..." required>
+                </div>
+                <div class="form-group">
+                    <label>Tài khoản / Email</label>
+                    <input type="text" id="reg-username" placeholder="Nhập tên tài khoản muốn tạo..." required>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="reg-password" placeholder="Tạo mật khẩu..." required>
+                </div>
+                <button type="submit" class="btn-auth">ĐĂNG KÝ</button>
+            </form>
+            <div class="switch-auth">
+                Đã có tài khoản? <a href="#" onclick="switchForm('login')">Đăng nhập</a>
+            </div>
+        </div>
+
+        <div class="welcome-card hidden" id="home-page">
+            <h2>Chào mừng bạn trở lại, <span id="user-display-name">Học Viên</span>!</h2>
+            <p>Hôm nay bạn muốn rèn luyện kỹ năng tiếng Anh nào?</p>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <strong>Từ vựng đã học</strong>
+                    <p style="font-size: 24px; color: var(--primary-color); margin: 5px 0;">25 từ</p>
+                </div>
+                <div class="stat-box">
+                    <strong>Chuỗi ngày học (Streak)</strong>
+                    <p style="font-size: 24px; color: var(--success-color); margin: 5px 0;"> 🔥 3 Ngày</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Mảng chứa tài khoản hệ thống (Giả lập database)
+        // Tạo sẵn một tài khoản mặc định là admin / 123456 để bạn test nhanh
+        let usersDatabase = [
+            { name: "Quản trị viên", username: "admin", password: "123" }
+        ];
+
+        // Hàm chuyển đổi qua lại form Đăng nhập / Đăng ký
+        function switchForm(formType) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
+            if (formType === 'register') {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            } else {
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            }
+        }
+
+        // Xử lý khi bấm nút ĐĂNG KÝ
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+
+            // Kiểm tra trùng tài khoản
+            let userExists = usersDatabase.find(user => user.username === username);
+            if (userExists) {
+                alert("❌ Tài khoản hoặc Email này đã tồn tại trên hệ thống!");
+                return;
+            }
+
+            // Thêm tài khoản mới vào database giả lập
+            usersDatabase.push({ name: name, username: username, password: password });
+            alert("🎉 Đăng ký tài khoản thành công! Hãy đăng nhập nhé.");
+            
+            // Xóa dữ liệu cũ ở form đăng ký và chuyển về form đăng nhập
+            document.getElementById('reg-name').value = '';
+            document.getElementById('reg-username').value = '';
+            document.getElementById('reg-password').value = '';
+            switchForm('login');
+        }
+
+        // Xử lý khi bấm nút ĐĂNG NHẬP
+        function handleLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('login-username').value.trim();
+            const passwordInput = document.getElementById('login-password').value;
+
+            // Tìm xem tài khoản có tồn tại không
+            let targetUser = usersDatabase.find(user => user.username === usernameInput);
+
+            if (!targetUser) {
+                alert("⚠️ Tài khoản chưa được đăng ký! Vui lòng kiểm tra lại hoặc tạo tài khoản mới.");
+                return;
+            }
+
+            // Nếu có tài khoản, kiểm tra mật khẩu
+            if (targetUser.password !== passwordInput) {
+                alert("❌ Sai mật khẩu! Vui lòng nhập lại.");
+                return;
+            }
+
+            // Đăng nhập thành công -> Hiển thị trang chủ và thanh công cụ
+            alert("🔓 Đăng nhập thành công!");
+            
+            // Đồng bộ tên người dùng lên thanh menu và trang chủ
+            document.getElementById('user-display-name').innerText = targetUser.name;
+            document.getElementById('profile-name').innerText = "Họ tên: " + targetUser.name;
+
+            // Hiện thanh điều hướng và trang chủ chính, ẩn form đăng nhập
+            document.getElementById('nav-links').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('home-page').classList.remove('remove'); // Hiển thị trang chủ
+            showPage('home');
+        }
+
+        // Điều hướng ẩn hiện trang chủ chính
+        function showPage(pageId) {
+            if (pageId === 'home') {
+                document.getElementById('home-page').classList.remove('hidden');
+            }
+        }
+
+        // Xử lý ĐĂNG XUẤT
+        function logout() {
+            alert("🔒 Bạn đã đăng xuất hệ thống!");
+            // Ẩn thanh công cụ và ẩn trang chủ
+            document.getElementById('nav-links').classList.add('hidden');
+            document.getElementById('home-page').classList.add('hidden');
+            
+            // Reset ô nhập liệu đăng nhập và hiện lại form đăng nhập ban đầu
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-form').classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
+
