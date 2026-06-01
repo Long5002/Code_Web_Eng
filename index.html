@@ -233,10 +233,10 @@
                 <li class="nav-item">
                     <a class="nav-link">Các học phần ▼</a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" onclick="alert('Tính năng luyện Nghe đang phát triển!')">🎧 Luyện Nghe</a></li>
-                        <li><a href="#" onclick="alert('Tính năng luyện Nói đang phát triển!')">🗣️ Luyện Nói</a></li>
-                        <li><a href="#" onclick="alert('Tính năng luyện Đọc đang phát triển!')">📖 Luyện Đọc</a></li>
-                        <li><a href="#" onclick="alert('Tính năng luyện Viết đang phát triển!')">✍️ Luyện Viết</a></li>
+                        <li><a href="#" onclick="loadLesson('listening')">🎧 Luyện Nghe</a></li>
+                        <li><a href="#" onclick="loadLesson('speaking')">🗣️ Luyện Nói</a></li>
+                        <li><a href="#" onclick="loadLesson('reading')">📖 Luyện Đọc</a></li>
+                        <li><a href="#" onclick="loadLesson('writing')">✍️ Luyện Viết</a></li>
                     </ul>
                 </li>
 
@@ -253,7 +253,17 @@
             </ul>
         </div>
     </nav>
-
+    <!-- Khung chứa nội dung học tập (Mặc định ban đầu sẽ ẩn đi) -->
+    <div id="learning-section" class="hidden" style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <!-- Tiêu đề kỹ năng (Sẽ thay đổi động nhờ JavaScript) -->
+        <h2 id="section-title" style="color: #007bff;">Tên Kỹ Năng</h2>
+        <hr>
+        <!-- Nội dung chi tiết của bài học (Sẽ thay đổi động nhờ JavaScript) -->
+        <div id="lesson-container">
+            <!-- JavaScript sẽ tự động bắn bài học vào đây -->
+            </div>
+    </div>
+    
     <div class="main-content">
         
         <div class="auth-card" id="login-form">
@@ -313,107 +323,7 @@
 
     </div>
 
-    <script>
-        // Mảng chứa tài khoản hệ thống (Giả lập database)
-        // Tạo sẵn một tài khoản mặc định là admin / 123456 để bạn test nhanh
-        let usersDatabase = [
-            { name: "Quản trị viên", username: "admin", password: "123" }
-        ];
-
-        // Hàm chuyển đổi qua lại form Đăng nhập / Đăng ký
-        function switchForm(formType) {
-            const loginForm = document.getElementById('login-form');
-            const registerForm = document.getElementById('register-form');
-
-            if (formType === 'register') {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-            } else {
-                registerForm.classList.add('hidden');
-                loginForm.classList.remove('hidden');
-            }
-        }
-
-        // Xử lý khi bấm nút ĐĂNG KÝ
-        function handleRegister(e) {
-            e.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const username = document.getElementById('reg-username').value.trim();
-            const password = document.getElementById('reg-password').value;
-
-            // Kiểm tra trùng tài khoản
-            let userExists = usersDatabase.find(user => user.username === username);
-            if (userExists) {
-                alert("❌ Tài khoản hoặc Email này đã tồn tại trên hệ thống!");
-                return;
-            }
-
-            // Thêm tài khoản mới vào database giả lập
-            usersDatabase.push({ name: name, username: username, password: password });
-            alert("🎉 Đăng ký tài khoản thành công! Hãy đăng nhập nhé.");
-            
-            // Xóa dữ liệu cũ ở form đăng ký và chuyển về form đăng nhập
-            document.getElementById('reg-name').value = '';
-            document.getElementById('reg-username').value = '';
-            document.getElementById('reg-password').value = '';
-            switchForm('login');
-        }
-
-        // Xử lý khi bấm nút ĐĂNG NHẬP
-        function handleLogin(e) {
-            e.preventDefault();
-            const usernameInput = document.getElementById('login-username').value.trim();
-            const passwordInput = document.getElementById('login-password').value;
-
-            // Tìm xem tài khoản có tồn tại không
-            let targetUser = usersDatabase.find(user => user.username === usernameInput);
-
-            if (!targetUser) {
-                alert("⚠️ Tài khoản chưa được đăng ký! Vui lòng kiểm tra lại hoặc tạo tài khoản mới.");
-                return;
-            }
-
-            // Nếu có tài khoản, kiểm tra mật khẩu
-            if (targetUser.password !== passwordInput) {
-                alert("❌ Sai mật khẩu! Vui lòng nhập lại.");
-                return;
-            }
-
-            // Đăng nhập thành công -> Hiển thị trang chủ và thanh công cụ
-            alert("🔓 Đăng nhập thành công!");
-            
-            // Đồng bộ tên người dùng lên thanh menu và trang chủ
-            document.getElementById('user-display-name').innerText = targetUser.name;
-            document.getElementById('profile-name').innerText = "Họ tên: " + targetUser.name;
-
-            // Hiện thanh điều hướng và trang chủ chính, ẩn form đăng nhập
-            document.getElementById('nav-links').classList.remove('hidden');
-            document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('home-page').classList.remove('remove'); // Hiển thị trang chủ
-            showPage('home');
-        }
-
-        // Điều hướng ẩn hiện trang chủ chính
-        function showPage(pageId) {
-            if (pageId === 'home') {
-                document.getElementById('home-page').classList.remove('hidden');
-            }
-        }
-
-        // Xử lý ĐĂNG XUẤT
-        function logout() {
-            alert("🔒 Bạn đã đăng xuất hệ thống!");
-            // Ẩn thanh công cụ và ẩn trang chủ
-            document.getElementById('nav-links').classList.add('hidden');
-            document.getElementById('home-page').classList.add('hidden');
-            
-            // Reset ô nhập liệu đăng nhập và hiện lại form đăng nhập ban đầu
-            document.getElementById('login-username').value = '';
-            document.getElementById('login-password').value = '';
-            document.getElementById('login-form').classList.remove('hidden');
-        }
-    </script>
-
+<script src="script.js"></script>
 </body>
 </html>
 
